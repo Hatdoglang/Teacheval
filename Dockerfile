@@ -1,14 +1,11 @@
-# Use the official PHP image
-FROM php:8.0-cli
+# Use an official PHP image
+FROM php:8.1-apache
 
-# Set working directory
-WORKDIR /var/www/html
+# Install dependencies (if required)
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Copy application files
-COPY . .
+# Copy project files
+COPY . /var/www/html/
 
-# Expose port
-EXPOSE 8080
-
-# Start PHP server
-CMD ["php", "-S", "0.0.0.0:8080"]
+# Expose the default Apache port
+EXPOSE 80
