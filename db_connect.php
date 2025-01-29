@@ -1,15 +1,13 @@
-<?php 
+<?php
+$host = getenv("DB_HOST") ?: "b8occq7i8qfvinaczwwh-mysql.services.clever-cloud.com";
+$user = getenv("DB_USER") ?: "uuovfe0ukxs2luYY";
+$password = getenv("DB_PASSWORD") ?: "sZXlCFtPlpIwOUOIzLK8";
+$dbname = getenv("DB_NAME") ?: "b8occq7i8qfvinaczwwh";
+$port = getenv("DB_PORT") ?: "3306";
 
-$host = "b8occq7i8qfvinaczwwh-mysql.services.clever-cloud.com"; // Cloud Clever MySQL host
-$username = "uuovfe0ukxs2luyy"; // Replace with your Cloud Clever MySQL username
-$password = "sZXlCFtPlpIwOU0IzLK8"; // Replace with your Cloud Clever MySQL password
-$database = "b8occq7i8qfvinaczwwh"; // Cloud Clever database name
-
-$conn = new mysqli($host, $username, $password, $database);
+$conn = new mysqli($host, $user, $password, $dbname, $port);
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
-echo "Connected successfully!";
 ?>
