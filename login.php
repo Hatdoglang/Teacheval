@@ -90,6 +90,7 @@ if (isset($_SESSION['login_id'])) {
             <select name="login" class="custom-select custom-select-sm">
               <option value="3">Student</option>
               <option value="2">Faculty</option>
+              <option value="1">Admin</option>
             </select>
           </div>
           <div class="row">
