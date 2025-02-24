@@ -68,8 +68,26 @@ AND student_id = {$_SESSION['login_id']})");
 				</div>
 				<div class="card-body">
 					<fieldset class="border border-info p-2 w-100">
-						<legend class="w-auto">Rating Legend</legend>
-						<p>5 = Strongly Agree, 4 = Agree, 3 = Uncertain, 2 = Disagree, 1 = Strongly Disagree</p>
+						<div class="card bg-light p-3 mb-3 shadow-sm">
+							<h5 class="text-primary mb-2"><i class="fas fa-star"></i> Rating Legend</h5>
+							<ul class="list-group">
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span class="badge bg-success rounded-pill">5</span> Strongly Agree
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span class="badge bg-primary rounded-pill">4</span> Agree
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span class="badge bg-warning text-dark rounded-pill">3</span> Uncertain
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span class="badge bg-danger rounded-pill">2</span> Disagree
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span class="badge bg-dark rounded-pill">1</span> Strongly Disagree
+								</li>
+							</ul>
+						</div>
 					</fieldset>
 					<form id="manage-evaluation">
 						<input type="hidden" name="class_id" value="<?php echo $_SESSION['login_class_id'] ?>">
