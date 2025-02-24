@@ -102,8 +102,8 @@ AND student_id = {$_SESSION['login_id']})");
 									<?php for($c=1;$c<=5;$c++): ?>
 									<td class="text-center">
 										<div class="icheck-success d-inline">
-		                                    <input type="radio" name="rate[<?php echo $row['id'] ?>]" <?php echo $c == 5 ? "checked" : '' ?> id="qradio<?php echo $row['id'].'_'.$c ?>" value="<?php echo $c ?>">
-		                                    <label for="qradio<?php echo $row['id'].'_'.$c ?>"></label>
+										<input type="radio" name="rate[<?php echo $row['id'] ?>]" id="qradio<?php echo $row['id'].'_'.$c ?>" value="<?php echo $c ?>">
+										<label for="qradio<?php echo $row['id'].'_'.$c ?>"></label>
 		                                </div>
 									</td>
 									<?php endfor; ?>
