@@ -7,17 +7,18 @@ foreach($system as $k => $v){
   $_SESSION['system'][$k] = $v;
 }
 ob_end_flush();
-?>
-<?php 
+
 if(isset($_SESSION['login_id']))
-header("location:index.php?page=home");
+  header("location:index.php?page=home");
 ?>
-  
 <!DOCTYPE html>
 <html lang="en">
 
-<?php include 'header.php' ?>
+<!-- Include your header file (AdminLTE, Bootstrap, etc.) -->
+<?php include 'header.php'; ?>
+
 <style>
+  /* Background styling */
   body {
     background-image: url('assets/uploads/background.jpg');
     background-size: cover;
@@ -30,6 +31,7 @@ header("location:index.php?page=home");
     align-items: center;
     position: relative; 
   }
+
   body::before {
     content: '';
     position: absolute;
@@ -40,9 +42,24 @@ header("location:index.php?page=home");
     background-color: rgba(0, 0, 0, 0.5);
     z-index: -1;
   }
-  h2 {
-    color: white;
+
+  /* Ensure the .login-box is on top of the overlay */
+  .login-box {
+    z-index: 1;
   }
+
+  /* Add a box shadow to the card for better contrast against the background */
+  .card {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Login heading */
+  .login-logo h2 {
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  /* Profile image in the sign-up modal */
   img#cimg {
     height: 100px;
     width: 100px;
@@ -53,9 +70,14 @@ header("location:index.php?page=home");
   }
 </style>
 
-<body class="hold-transition login-page bg-white">
-  <h2><b><?php echo $_SESSION['system']['name'] ?> - Login</b></h2>
+<body class="hold-transition login-page">
   <div class="login-box">
+    <!-- You can use .login-logo for a header or logo area -->
+    <div class="login-logo">
+      <h2><b><?php echo $_SESSION['system']['name'] ?> - Login</b></h2>
+    </div>
+    <!-- /.login-logo -->
+
     <div class="card">
       <div class="card-body login-card-body">
         <form action="" id="login-form">
@@ -65,20 +87,23 @@ header("location:index.php?page=home");
               <div class="input-group-text"><span class="fas fa-envelope"></span></div>
             </div>
           </div>
+
           <div class="input-group mb-3">
             <input type="password" class="form-control" name="password" required placeholder="Password">
             <div class="input-group-append">
               <div class="input-group-text"><span class="fas fa-lock"></span></div>
             </div>
           </div>
+
           <div class="form-group mb-3">
-            <label for="">Login As</label>
+            <label for="login">Login As</label>
             <select name="login" class="custom-select custom-select-sm">
               <option value="3">Student</option>
               <option value="2">Faculty</option>
-<!--               <option value="1">Admin</option>
-            </select> -->
+              <!-- <option value="1">Admin</option> -->
+            </select>
           </div>
+
           <div class="row">
             <div class="col-8">
               <div class="icheck-primary">
@@ -91,17 +116,24 @@ header("location:index.php?page=home");
             </div>
           </div>
         </form>
-        <p class="mt-3 text-center">Don't have an account? <a href="#" data-toggle="modal" data-target="#signupModal">Sign Up</a></p>
+
+        <p class="mt-3 text-center">
+          Don't have an account? 
+          <a href="#" data-toggle="modal" data-target="#signupModal">Sign Up</a>
+        </p>
       </div>
+      <!-- /.login-card-body -->
     </div>
+    <!-- /.card -->
   </div>
+  <!-- /.login-box -->
 
   <!-- Sign-Up Modal -->
   <div class="modal fade" id="signupModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Sign Up</h5>
+          <h5 class="modal-title">Sign Up / Student</h5>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
@@ -125,14 +157,15 @@ header("location:index.php?page=home");
                   <select name="class_id" class="form-control">
                     <option value="">Select Class</option>
                     <?php 
-                    $classes = $conn->query("SELECT id,concat(curriculum,' ',level,' - ',section) as class FROM class_list");
-                    while($row=$classes->fetch_assoc()):
+                      $classes = $conn->query("SELECT id, concat(curriculum,' ',level,' - ',section) as class FROM class_list");
+                      while($row = $classes->fetch_assoc()):
                     ?>
                     <option value="<?php echo $row['id'] ?>"><?php echo $row['class'] ?></option>
                     <?php endwhile; ?>
                   </select>
                 </div>
               </div>
+
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Email</label>
@@ -158,6 +191,7 @@ header("location:index.php?page=home");
       </div>
     </div>
   </div>
+  <!-- End Sign-Up Modal -->
 
   <script>
     function displayImg(input) {
@@ -170,6 +204,7 @@ header("location:index.php?page=home");
       }
     }
 
+    // Handle student sign-up
     $('#manage_student').submit(function(e){
       e.preventDefault();
       $('input').removeClass("border-danger");
@@ -190,12 +225,13 @@ header("location:index.php?page=home");
                   $('#cimg').attr('src', 'assets/uploads/default-avatar.png');
               } else if(resp == 2){
                   $('#msg').html("<div class='alert alert-danger'>Email already exists.</div>");
-                  $('[name="email"]').addClass("border-danger");
+                  $('[name=\"email\"]').addClass("border-danger");
               }
           }
       });
     });
 
+    // Handle login
     $('#login-form').submit(function(e){
       e.preventDefault();
       start_load();
@@ -206,21 +242,21 @@ header("location:index.php?page=home");
         method:'POST',
         data:$(this).serialize(),
         error:err=>{
-          console.log(err)
+          console.log(err);
           end_load();
         },
         success:function(resp){
           if(resp == 1){
-            location.href ='index.php?page=home';
-          }else{
-            $('#login-form').prepend('<div class="alert alert-danger">Username or password is incorrect.</div>')
+            location.href = 'index.php?page=home';
+          } else {
+            $('#login-form').prepend('<div class="alert alert-danger">Username or password is incorrect.</div>');
             end_load();
           }
         }
-      })
+      });
     });
   </script>
 
-<?php include 'footer.php' ?>
+<?php include 'footer.php'; ?>
 </body>
 </html>
