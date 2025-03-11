@@ -12,7 +12,7 @@
   }
 
   .nav-link{
-    color: #fff !important;
+    color: #000 !important;
   }
 </style>
 
