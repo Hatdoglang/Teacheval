@@ -1,9 +1,30 @@
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <div class="dropdown">
-   	<a href="./" class="brand-link">
-        <h3 class="text-center p-0 m-0"><b>Student</b></h3>
+<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: white;">
+<div class="dropdown">
+<div class="dropdown text-center p-3">
+      <div class="logo-container">
+        <img src="assets/dist/img/test.png" alt="Logo" class="logo">
+        <h3 class="ms-2"><b>Student</b></h3>
+      </div>
+    </div>
+    <style>
+      .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    </a>
+      .logo {
+        height: 40px;
+        margin-right: 10px;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+      .p-3{
+        background-color:rgba(233, 230, 230, 0.81);
+      }
+    </style>
       
     </div>
     <div class="sidebar ">
