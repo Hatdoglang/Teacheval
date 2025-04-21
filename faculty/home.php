@@ -304,7 +304,7 @@ while ($row = $subjects_query->fetch_assoc()) {
                     }
                 },
                 tooltip: {
-                    enabled: false // Disable hover tooltips
+                    enabled: true // Disable hover tooltips
                 }
             },
             hover: {
