@@ -165,26 +165,26 @@ while ($row = $subjects_query->fetch_assoc()) {
         </div>
         <div class="card-body">
             <?php if (!empty($subjects)): ?>
-                <table class="table table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Subject Code</th>
-                            <th>Subject Name</th>
-                            <th>Class</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($subjects as $subject): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($subject['subject_code']); ?></td>
-                                <td><?php echo htmlspecialchars($subject['subject_name']); ?></td>
-                                <td><?php echo htmlspecialchars($subject['class_name']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Class</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($subjects as $subject): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($subject['subject_code']); ?></td>
+                        <td><?php echo htmlspecialchars($subject['subject_name']); ?></td>
+                        <td><?php echo htmlspecialchars($subject['class_name']); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
             <?php else: ?>
-                <div class="alert alert-light text-center">No subjects assigned.</div>
+            <div class="alert alert-light text-center">No subjects assigned.</div>
             <?php endif; ?>
         </div>
     </div>
@@ -213,11 +213,53 @@ while ($row = $subjects_query->fetch_assoc()) {
                 </dd>
             </dl>
         </div>
+
+    </div>
+</div>
+
+
+<div class="col-12">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5>Bar Chart</h5>
+        </div>
         <div class="card-body">
-            <canvas id="ratingChart" style="width: 200px; height: 60px;"></canvas>
+            <div class="chart-container">
+                <canvas id="ratingChart"></canvas>
+            </div>
         </div>
     </div>
 </div>
+<style>
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    /* Base height */
+}
+
+@media (max-width: 576px) {
+    .chart-container {
+        height: 200px;
+        /* Shorter chart for small screens */
+    }
+
+    .card-header h5 {
+        font-size: 1rem;
+        /* Smaller title on mobile */
+    }
+
+    canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+.filter-btn.active {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .5);
+    font-weight: bold;
+}
+</style>
+
 <!-- Comment Display with Scroll -->
 <div class="col-12">
     <div class="card">
@@ -225,101 +267,151 @@ while ($row = $subjects_query->fetch_assoc()) {
             <h5>Student Comments</h5>
         </div>
         <div class="card-body">
+            <!-- Filter Buttons -->
+            <div class="mb-3 text-center">
+                <button class="btn btn-success btn-sm filter-btn" data-filter="positive">Positive</button>
+                <button class="btn btn-danger btn-sm filter-btn" data-filter="negative">Negative</button>
+                <button class="btn btn-warning btn-sm filter-btn" data-filter="neutral">Neutral</button>
+                <button class="btn btn-primary btn-sm filter-btn" data-filter="all">Show All</button>
+            </div>
+
             <?php if (!empty($comments)): ?>
-                <div style="max-height: 300px; overflow-y: auto;"> <!-- Enable scrolling if comments exceed 7 -->
-                    <ul class="list-group">
-                        <?php foreach ($comments as $comment): ?>
-                            <li class="list-group-item"><?php echo $comment; ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <ul class="list-group" id="comment-list">
+                    <?php foreach ($comments as $comment): ?>
+                    <?php
+                            $text = $comment;
+                            $lc = strtolower($text);
+
+                            // Very simple keyword-based sentiment classification
+                            if (strpos($lc, 'good') !== false || strpos($lc, 'great') !== false || strpos($lc, 'excellent') !== false || strpos($lc, 'helpful') !== false || strpos($lc, 'amazing') !== false) {
+                                $sentiment = 'positive';
+                            } elseif (strpos($lc, 'poor') !== false || strpos($lc, 'bad') !== false || strpos($lc, 'needs improvement') !== false || strpos($lc, 'late') !== false || strpos($lc, 'boring') !== false) {
+                                $sentiment = 'negative';
+                            } else {
+                                $sentiment = 'neutral';
+                            }
+                        ?>
+                    <li class="list-group-item comment-item" data-sentiment="<?php echo $sentiment; ?>">
+                        <?php echo $text; ?>
+                    </li>
+                    <?php endforeach; ?>
+
+                </ul>
+            </div>
             <?php else: ?>
-                <div class="alert alert-light text-center">No comments available.</div>
+            <div class="alert alert-light text-center">No comments available.</div>
             <?php endif; ?>
         </div>
     </div>
 </div>
 
+<script>
+document.querySelectorAll('.filter-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const filter = button.getAttribute('data-filter');
+
+        // Highlight the active button
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // Filter the comments
+        document.querySelectorAll('.comment-item').forEach(item => {
+            const sentiment = item.getAttribute('data-sentiment');
+            item.style.display = (filter === 'all' || sentiment === filter) ? '' : 'none';
+        });
+    });
+});
+</script>
+
+
 <!-- Chart.js Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var ctx = document.getElementById('ratingChart').getContext('2d');
-    var ratingData = <?php echo json_encode($rating_data); ?>;
+var ctx = document.getElementById('ratingChart').getContext('2d');
+var ratingData = <?php echo json_encode($rating_data); ?>;
 
-    var ratingChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Ratings'], // Single category for better grouping
-            datasets: [
-                {
-                    label: 'Strongly Disagree (1 Star)',
-                    data: [ratingData[1]],
-                    backgroundColor: 'rgba(255, 99, 132, 0.6)', // Red
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
+var ratingChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Ratings'], // Single category for better grouping
+        datasets: [{
+                label: 'Strongly Disagree (1 Star)',
+                data: [ratingData[1]],
+                backgroundColor: 'rgba(255, 99, 132, 0.6)', // Red
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Disagree (2 Stars)',
+                data: [ratingData[2]],
+                backgroundColor: 'rgba(255, 165, 0, 0.6)', // Orange
+                borderColor: 'rgba(255, 165, 0, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Uncertain (3 Stars)',
+                data: [ratingData[3]],
+                backgroundColor: 'rgba(255, 206, 86, 0.6)', // Yellow
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Agree (4 Stars)',
+                data: [ratingData[4]],
+                backgroundColor: 'rgba(54, 162, 235, 0.6)', // Blue
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Strongly Agree (5 Stars)',
+                data: [ratingData[5]],
+                backgroundColor: 'rgba(75, 192, 75, 0.6)', // Green
+                borderColor: 'rgba(75, 192, 75, 1)',
+                borderWidth: 1
+            }
+        ]
+    },
+    options: {
+    responsive: true,
+    plugins: {
+        legend: {
+            display: true,
+            position: 'top',
+            labels: {
+                color: 'black',
+                font: {
+                    size: 10, // Smaller font size
+                    weight: 'normal'
                 },
-                {
-                    label: 'Disagree (2 Stars)',
-                    data: [ratingData[2]],
-                    backgroundColor: 'rgba(255, 165, 0, 0.6)', // Orange
-                    borderColor: 'rgba(255, 165, 0, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Uncertain (3 Stars)',
-                    data: [ratingData[3]],
-                    backgroundColor: 'rgba(255, 206, 86, 0.6)', // Yellow
-                    borderColor: 'rgba(255, 206, 86, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Agree (4 Stars)',
-                    data: [ratingData[4]],
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)', // Blue
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Strongly Agree (5 Stars)',
-                    data: [ratingData[5]],
-                    backgroundColor: 'rgba(75, 192, 75, 0.6)', // Green
-                    borderColor: 'rgba(75, 192, 75, 1)',
-                    borderWidth: 1
-                }
-            ]
+                padding: 8,
+                boxWidth: 12, // Smaller color box
+                usePointStyle: true, // Optional: makes it a dot or square instead of box
+            }
         },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        color: 'black',
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        },
-                        padding: 15
-                    }
-                },
-                tooltip: {
-                    enabled: true // Disable hover tooltips
-                }
-            },
-            hover: {
-                mode: null // Completely disable hover effects
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: "Number of Reviews"
-                    }
-                }
+        tooltip: {
+            enabled: false
+        }
+    },
+    layout: {
+        padding: {
+            top: 10
+        }
+    },
+    hover: {
+        mode: null
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+            title: {
+                display: true,
+                text: "Number of Reviews"
             }
         }
-    });
-</script>
+    }
+}
 
+
+});
+</script>
